@@ -1,0 +1,216 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Game Of Life</title>
+        <script type="text/javascript" src="lib/kinect.js">
+        </script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript">
+        </script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+               
+                var GOL = {}
+                x_cord = 0
+                y_cord = 0
+                width = 20;
+                height = 20;
+                GRID_COUNTER = 10
+                dead_color = "#00FFFF"
+                alive_color = "#000099";
+                GOL["grid"] = new Array();
+                
+                GOL = {
+                    "gridSize": 10,
+                    "grid": new Array(GOL.gridSize),
+                    "gridX": 250,
+                    "gridY": 75,
+					"cellSize": 20,
+					"deadCellColor":"#00FFFF",
+					"aliveCellColor":"#000099" 
+                }
+                
+                function init(){
+					var stage = new Kinetic.Stage("container", 800, 500);
+                	var layer = new Kinetic.Layer();
+                    initializeGrid(layer);
+                    
+                    stage.add(layer)
+                    
+                }
+                
+                function initializeGrid(layer){
+					var xCord = gridX;
+					var yCord = gridY;
+                    $.each(GOL.grid, function(rowIndex, row){
+						yCord = yCord + 20
+                        row = new Array(GOL.gridSize);
+                        $.each(row, function(colIndex, cell){
+							xCord = xCord + GOL.cellSize
+                            cell = new Kinetic.Rect({
+                                x: xCord,
+                                y: yCord,
+                                width: GOL.cellSize,
+                                height: GOL.cellSize,
+                                fill: GOL.deadCellColor,
+                                stroke: "C8C8C8",
+                                strokeWidth: 1
+                            });
+                            layer.add(cell);
+                        });
+						
+                    });
+                }
+                
+                
+//                for (var row_counter = 0; row_counter < GRID_COUNTER; row_counter++) {
+//                    x_cord = 250;
+//                    y_cord = 75 + row_counter * 20;
+//                    GOL["grid"][row_counter] = new Array();
+//                    for (var col_counter = 0; col_counter < GRID_COUNTER; col_counter++) {
+//                        x_cord = x_cord + 20
+//                        
+//                        GOL["grid"][row_counter][col_counter] = new Kinetic.Rect({
+//                            x: x_cord,
+//                            y: y_cord,
+//                            width: 20,
+//                            height: 20,
+//                            fill: dead_color,
+//                            stroke: "C8C8C8",
+//                            strokeWidth: 1
+//                        });
+//                        
+//                        layer.add(GOL["grid"][row_counter][col_counter])
+//                    }
+//                }
+                
+                for (var row_counter = 0; row_counter < GRID_COUNTER; row_counter++) {
+                    for (var col_counter = 0; col_counter < GRID_COUNTER; col_counter++) {
+                        GOL["grid"][row_counter][col_counter].on("click", function(){
+                            if (this.fill == alive_color) {
+                                this.fill = dead_color
+                                this.alive = false
+                            }
+                            else {
+                                this.fill = alive_color
+                                this.alive = true
+                            }
+                            
+                            layer.draw();
+                        });
+                    }
+                }
+                
+                for (var row_counter = 0; row_counter < GRID_COUNTER; row_counter++) {
+                    for (var col_counter = 0; col_counter < GRID_COUNTER; col_counter++) {
+                        if (GOL["grid"][row_counter][col_counter].alive) {
+                            GOL["grid"][row_counter][col_counter].fill = "#000000"
+                            
+                        }
+                    }
+                }
+                
+                function play(){
+                    $.each(GOL["grid"], function(row, array){
+                        $.each(array, function(col, rectangle){
+                            aliveNeighbours = getAliveNeighboursForCellAt(row, col);
+                            if (aliveNeighbours == 2 && GOL["grid"][row][col].alive == true) {
+                                rectangle.fill = alive_color;
+                                //GOL["grid"][row][col].markAlive = true;
+                            }
+                            else 
+                                if (aliveNeighbours == 3) {
+                                    rectangle.fill = alive_color;
+                                //GOL["grid"][row][col].markAlive = true;
+                                }
+                                else {
+                                    rectangle.fill = dead_color;
+                                //GOL["grid"][row][col].markDead = true;
+                                }
+                        });
+                    });
+                    layer.draw();
+                    synchronizeGridWithDisplay();
+                }
+                
+                function synchronizeGridWithDisplay(){
+                    $.each(GOL["grid"], function(row, cellArray){
+                        $.each(cellArray, function(col, cell){
+                            if (cell.fill == alive_color) {
+                                cell.alive = true
+                            }
+                            else {
+                                cell.alive = false
+                                console.log(cell.fill)
+                            }
+                        });
+                    });
+                }
+                function getAliveNeighboursForCellAt(row, col){
+                    var aliveNeighbours = 0;
+                    
+                    if (neighbourAliveAt(col - 1, row - 1)) {
+                        aliveNeighbours++
+                    }
+                    
+                    if (neighbourAliveAt(col - 1, row)) {
+                        aliveNeighbours++
+                    }
+                    
+                    if (neighbourAliveAt(col - 1, row + 1)) {
+                        aliveNeighbours++
+                    }
+                    
+                    if (neighbourAliveAt(col, row - 1)) {
+                        aliveNeighbours++
+                    }
+                    
+                    if (neighbourAliveAt(col, row + 1)) {
+                        aliveNeighbours++
+                    }
+                    
+                    if (neighbourAliveAt(col + 1, row + 1)) {
+                        aliveNeighbours++
+                    }
+                    
+                    if (neighbourAliveAt(col + 1, row)) {
+                        aliveNeighbours++
+                    }
+                    
+                    if (neighbourAliveAt(col + 1, row - 1)) {
+                        aliveNeighbours++
+                    }
+                    
+                    return aliveNeighbours;
+                    
+                }
+                
+                function neighbourAliveAt(col, row){
+                
+                    if (col >= 0 && col < GRID_COUNTER && row >= 0 && row < GRID_COUNTER && GOL["grid"][row][col].alive == true) {
+                        return true
+                    }
+                    
+                }
+                playButton = new Kinetic.Rect({
+                    x: x_cord - 130,
+                    y: y_cord + 50,
+                    width: 100,
+                    height: 50,
+                    fill: "#00FFFF",
+                    stroke: "C8C8C8",
+                    strokeWidth: 1
+                });
+                
+                playButton.on("click", function(){
+                    play();
+                });
+                layer.add(playButton)
+            });
+        </script>
+    </head>
+    <body>
+        <div id="container" style ="border:1px solid black">
+        </div>
+    </body>
+</html>
