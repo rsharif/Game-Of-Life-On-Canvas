@@ -9,44 +9,49 @@
         </script>
         <script type="text/javascript">
             $(document).ready(function(){
-               
-                var GOL = {}
-                x_cord = 0
-                y_cord = 0
-                width = 20;
-                height = 20;
-                GRID_COUNTER = 10
-                dead_color = "#00FFFF"
-                alive_color = "#000099";
-                GOL["grid"] = new Array();
+            
+                //                var GOL = {}
+                //                x_cord = 0
+                //                y_cord = 0
+                //                width = 20;
+                //                height = 20;
+                //                GRID_COUNTER = 10
+                //                dead_color = "#00FFFF"
+                //                alive_color = "#000099";
+                //                GOL["grid"] = new Array();
                 
                 GOL = {
                     "gridSize": 10,
-                    "grid": new Array(GOL.gridSize),
+                    "grid": new Array(10),
                     "gridX": 250,
                     "gridY": 75,
-					"cellSize": 20,
-					"deadCellColor":"#00FFFF",
-					"aliveCellColor":"#000099" 
+                    "cellSize": 20,
+                    "deadCellColor": "#00FFFF",
+                    "aliveCellColor": "#000099"
                 }
                 
+				init();
+				
                 function init(){
-					var stage = new Kinetic.Stage("container", 800, 500);
-                	var layer = new Kinetic.Layer();
+                    var stage = new Kinetic.Stage("container", 800, 500);
+                    var layer = new Kinetic.Layer();
                     initializeGrid(layer);
-                    
                     stage.add(layer)
                     
                 }
                 
                 function initializeGrid(layer){
-					var xCord = gridX;
-					var yCord = gridY;
+                
+                    var yCord = GOL.gridY;
                     $.each(GOL.grid, function(rowIndex, row){
-						yCord = yCord + 20
+                    
+                        yCord = yCord + 20
+                        var xCord = GOL.gridX;
                         row = new Array(GOL.gridSize);
+                        
                         $.each(row, function(colIndex, cell){
-							xCord = xCord + GOL.cellSize
+                        
+                            xCord = xCord + GOL.cellSize
                             cell = new Kinetic.Rect({
                                 x: xCord,
                                 y: yCord,
@@ -56,34 +61,27 @@
                                 stroke: "C8C8C8",
                                 strokeWidth: 1
                             });
+                            
                             layer.add(cell);
+
+                            cell.on("click", function(){
+                                if (this.fill == GOL.aliveCellColor) {
+                                    this.fill = GOL.deadCellColor
+                                    this.alive = false
+                                }
+                                else {
+                                    this.fill = GOL.aliveCellColor
+                                    this.alive = true
+                                } 
+                                layer.draw();
+                            }); 
                         });
-						
+                        
                     });
                 }
                 
                 
-//                for (var row_counter = 0; row_counter < GRID_COUNTER; row_counter++) {
-//                    x_cord = 250;
-//                    y_cord = 75 + row_counter * 20;
-//                    GOL["grid"][row_counter] = new Array();
-//                    for (var col_counter = 0; col_counter < GRID_COUNTER; col_counter++) {
-//                        x_cord = x_cord + 20
-//                        
-//                        GOL["grid"][row_counter][col_counter] = new Kinetic.Rect({
-//                            x: x_cord,
-//                            y: y_cord,
-//                            width: 20,
-//                            height: 20,
-//                            fill: dead_color,
-//                            stroke: "C8C8C8",
-//                            strokeWidth: 1
-//                        });
-//                        
-//                        layer.add(GOL["grid"][row_counter][col_counter])
-//                    }
-//                }
-                
+
                 for (var row_counter = 0; row_counter < GRID_COUNTER; row_counter++) {
                     for (var col_counter = 0; col_counter < GRID_COUNTER; col_counter++) {
                         GOL["grid"][row_counter][col_counter].on("click", function(){
@@ -100,16 +98,16 @@
                         });
                     }
                 }
-                
-                for (var row_counter = 0; row_counter < GRID_COUNTER; row_counter++) {
-                    for (var col_counter = 0; col_counter < GRID_COUNTER; col_counter++) {
-                        if (GOL["grid"][row_counter][col_counter].alive) {
-                            GOL["grid"][row_counter][col_counter].fill = "#000000"
-                            
-                        }
-                    }
-                }
-                
+                //                
+                //                for (var row_counter = 0; row_counter < GRID_COUNTER; row_counter++) {
+                //                    for (var col_counter = 0; col_counter < GRID_COUNTER; col_counter++) {
+                //                        if (GOL["grid"][row_counter][col_counter].alive) {
+                //                            GOL["grid"][row_counter][col_counter].fill = "#000000"
+                //                            
+                //                        }
+                //                    }
+                //                }
+                //                
                 function play(){
                     $.each(GOL["grid"], function(row, array){
                         $.each(array, function(col, rectangle){
@@ -192,20 +190,20 @@
                     }
                     
                 }
-                playButton = new Kinetic.Rect({
-                    x: x_cord - 130,
-                    y: y_cord + 50,
-                    width: 100,
-                    height: 50,
-                    fill: "#00FFFF",
-                    stroke: "C8C8C8",
-                    strokeWidth: 1
-                });
-                
-                playButton.on("click", function(){
-                    play();
-                });
-                layer.add(playButton)
+                //                playButton = new Kinetic.Rect({
+                //                    x: x_cord - 130,
+                //                    y: y_cord + 50,
+                //                    width: 100,
+                //                    height: 50,
+                //                    fill: "#00FFFF",
+                //                    stroke: "C8C8C8",
+                //                    strokeWidth: 1
+                //                });
+                //                
+                //                playButton.on("click", function(){
+                //                    play();
+                //                });
+                // layer.add(playButton)
             });
         </script>
     </head>
