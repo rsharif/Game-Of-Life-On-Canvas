@@ -89,18 +89,20 @@
                 }
                 
                 function play(){
-                    $.each(GOL.grid, function(row, array){
-                        $.each(array, function(col, rectangle){
-                            aliveNeighbours = getAliveNeighboursForCellAt(row, col);
-                            if (aliveNeighbours == 2 && GOL["grid"][row][col].alive == true) {
-                                rectangle.fill = GOL.aliveCellColor;
+                    $.each(GOL.grid, function(rowIndex, row){
+						
+                        $.each(row, function(colIndex, cell){
+							
+                            aliveNeighbours = getAliveNeighboursForCellAt(rowIndex, colIndex);
+                            if (aliveNeighbours == 2 && GOL.grid[rowIndex][colIndex].alive === true) {
+                                cell.fill = GOL.aliveCellColor;
                             }
                             else 
                                 if (aliveNeighbours == 3) {
-                                    rectangle.fill = GOL.aliveCellColor;
+                                    cell.fill = GOL.aliveCellColor;
                                 }
                                 else {
-                                    rectangle.fill = GOL.deadCellColor;
+                                    cell.fill = GOL.deadCellColor;
                                 }
                         });
                     });
@@ -109,60 +111,42 @@
                 }
                 
                 function synchronizeGridWithDisplay(){
-                    $.each(GOL.grid, function(row, cellArray){
-                        $.each(cellArray, function(col, cell){
+                    $.each(GOL.grid, function(rowIndex, row){
+                        $.each(row, function(colIndex, cell){
                             if (cell.fill == GOL.aliveCellColor) {
-                                cell.alive = true
+                                cell.alive = true;
                             }
                             else {
-                                cell.alive = false
+                                cell.alive = false;
                             }
                         });
                     });
                 }
-                function getAliveNeighboursForCellAt(row, col){
+				
+                function getAliveNeighboursForCellAt(rowIndex, colIndex){
                     var aliveNeighbours = 0;
-                    
-                    if (neighbourAliveAt(col - 1, row - 1)) {
-                        aliveNeighbours++
-                    }
-                    
-                    if (neighbourAliveAt(col - 1, row)) {
-                        aliveNeighbours++
-                    }
-                    
-                    if (neighbourAliveAt(col - 1, row + 1)) {
-                        aliveNeighbours++
-                    }
-                    
-                    if (neighbourAliveAt(col, row - 1)) {
-                        aliveNeighbours++
-                    }
-                    
-                    if (neighbourAliveAt(col, row + 1)) {
-                        aliveNeighbours++
-                    }
-                    
-                    if (neighbourAliveAt(col + 1, row + 1)) {
-                        aliveNeighbours++
-                    }
-                    
-                    if (neighbourAliveAt(col + 1, row)) {
-                        aliveNeighbours++
-                    }
-                    
-                    if (neighbourAliveAt(col + 1, row - 1)) {
-                        aliveNeighbours++
-                    }
-                    
+                    var possibleNeighbours = [
+						{ "x" : colIndex - 1, "y" : rowIndex - 1},
+						{ "x" : colIndex - 1, "y" : rowIndex},
+						{ "x" : colIndex - 1, "y" : rowIndex + 1},
+						{ "x" : colIndex, "y" : rowIndex - 1},
+						{ "x" : colIndex, "y" : rowIndex + 1},
+						{ "x" : colIndex + 1, "y" : rowIndex + 1},
+						{ "x" : colIndex + 1, "y" : rowIndex},
+						{ "x" : colIndex + 1, "y" : rowIndex - 1}
+					];
+					$.each( possibleNeighbours , function ( index , neighbour ) {
+						if (neighbourAliveAt(neighbour.x, neighbour.y)) {
+							aliveNeighbours++;
+						}
+					});                   
                     return aliveNeighbours;
                     
                 }
                 
                 function neighbourAliveAt(col, row){
-                
-                    if (col >= 0 && col < GOL.gridSize && row >= 0 && row < GOL.gridSize && GOL["grid"][row][col].alive == true) {
-                        return true
+                    if (col >= 0 && col < GOL.gridSize && row >= 0 && row < GOL.gridSize && GOL.grid[row][col].alive === true) {
+                        return true;
                     }
                 }
                 
