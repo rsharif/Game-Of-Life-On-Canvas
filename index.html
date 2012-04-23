@@ -5,21 +5,24 @@
         <title>Game Of Life</title>
         <script type="text/javascript" src="lib/kinect.js">
         </script>
+		<link rel="stylesheet" type="text/css" href="lib/gol.css" />
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript">
+        	
+        
         </script>
         <script type="text/javascript">
             $(document).ready(function(){
             
                 GOL = {
-                    "gridSize": 10,
-                    "grid": new Array(10),
-                    "gridX": 250,
-                    "gridY": 75,
+                    "gridSize": 20,
+                    "grid": new Array(20),
+                    "gridX": 100,
+                    "gridY": 0,
                     "cellSize": 20,
-                    "deadCellColor": "#00FFFF",
-                    "aliveCellColor": "#000099",
-					"layer" : new Kinetic.Layer() ,
-					"stage" : new Kinetic.Stage("container", 800, 500)
+                    "deadCellColor": "#323330",
+                    "aliveCellColor": "#E0DB4F",
+                    "layer": new Kinetic.Layer(),
+                    "stage": new Kinetic.Stage("container", 800, 500)
                 };
                 
                 init();
@@ -72,27 +75,27 @@
                 }
                 
                 function initializeButtons(layer){
-                    playButton = new Kinetic.Rect({
-                        x: GOL.gridX - 130,
-                        y: GOL.gridY + 150,
-                        width: 100,
-                        height: 50,
-                        fill: "#00FFFF",
-                        stroke: "C8C8C8",
-                        strokeWidth: 1
+					
+					$("#reset").click(resetGrid);
+					$("#next").click(play);
+					
+                }
+                
+                function resetGrid(){
+                    $.each(GOL.grid, function(rowIndex, row){
+                        $.each(row, function(colIndex, cell){
+                            cell.fill = GOL.deadCellColor;
+                        });
                     });
-                    
-                    playButton.on("click", function(){
-                        play();
-                    });
-                    layer.add(playButton);
+                    GOL.layer.draw();
+                    synchronizeGridWithDisplay();
                 }
                 
                 function play(){
                     $.each(GOL.grid, function(rowIndex, row){
-						
+                    
                         $.each(row, function(colIndex, cell){
-							
+                        
                             aliveNeighbours = getAliveNeighboursForCellAt(rowIndex, colIndex);
                             if (aliveNeighbours == 2 && GOL.grid[rowIndex][colIndex].alive === true) {
                                 cell.fill = GOL.aliveCellColor;
@@ -122,26 +125,40 @@
                         });
                     });
                 }
-				
+                
                 function getAliveNeighboursForCellAt(rowIndex, colIndex){
                     var aliveNeighbours = 0;
-                    var possibleNeighbours = [
-						{ "x" : colIndex - 1, "y" : rowIndex - 1},
-						{ "x" : colIndex - 1, "y" : rowIndex},
-						{ "x" : colIndex - 1, "y" : rowIndex + 1},
-						{ "x" : colIndex, "y" : rowIndex - 1},
-						{ "x" : colIndex, "y" : rowIndex + 1},
-						{ "x" : colIndex + 1, "y" : rowIndex + 1},
-						{ "x" : colIndex + 1, "y" : rowIndex},
-						{ "x" : colIndex + 1, "y" : rowIndex - 1}
-					];
-					$.each( possibleNeighbours , function ( index , neighbour ) {
-						if (neighbourAliveAt(neighbour.x, neighbour.y)) {
-							aliveNeighbours++;
-						}
-					});                   
+                    var possibleNeighbours = [{
+                        "x": colIndex - 1,
+                        "y": rowIndex - 1
+                    }, {
+                        "x": colIndex - 1,
+                        "y": rowIndex
+                    }, {
+                        "x": colIndex - 1,
+                        "y": rowIndex + 1
+                    }, {
+                        "x": colIndex,
+                        "y": rowIndex - 1
+                    }, {
+                        "x": colIndex,
+                        "y": rowIndex + 1
+                    }, {
+                        "x": colIndex + 1,
+                        "y": rowIndex + 1
+                    }, {
+                        "x": colIndex + 1,
+                        "y": rowIndex
+                    }, {
+                        "x": colIndex + 1,
+                        "y": rowIndex - 1
+                    }];
+                    $.each(possibleNeighbours, function(index, neighbour){
+                        if (neighbourAliveAt(neighbour.x, neighbour.y)) {
+                            aliveNeighbours++;
+                        }
+                    });
                     return aliveNeighbours;
-                    
                 }
                 
                 function neighbourAliveAt(col, row){
@@ -154,7 +171,20 @@
         </script>
     </head>
     <body>
-        <div id="container" style ="border:1px solid black">
+    	<div id ="header">
+    		
+			<h1> Game of Life</h1>
+			
+    	</div>
+        <div id="container">
+        </div>
+        <div id = "buttons" style="position:relative:top:-200px">
+                <ul>
+                    <li>
+                        <a class="large button blue" id ="reset">Reset</a>
+						<a class="large button blue" id ="next">Next</a>
+                    </li>
+                </ul>
         </div>
     </body>
 </html>
